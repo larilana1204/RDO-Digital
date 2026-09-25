@@ -1584,12 +1584,15 @@
             submitBtns.forEach(b => { b.disabled = false; b.textContent = b.dataset.originalText; });
 
             if (!firebaseEnabled) {
-                showNotification(
-                    timedOut
-                        ? 'Não foi possível conectar ao banco compartilhado a tempo. Rodando em modo local por agora — recarregue a página para tentar de novo.'
-                        : 'Modo local: dados salvos apenas neste navegador (Firebase não configurado).',
-                    'error'
-                );
+                let msg;
+                if (timedOut) {
+                    msg = 'Não foi possível conectar ao banco compartilhado a tempo (rede lenta ou bloqueada). Rodando em modo local por agora — recarregue a página para tentar de novo.';
+                } else if (isFirebaseConfigured()) {
+                    msg = 'Falha ao conectar ao banco compartilhado (verifique sua rede/firewall). Rodando em modo local por agora — veja o Console (F12) para detalhes.';
+                } else {
+                    msg = 'Modo local: dados salvos apenas neste navegador (Firebase não configurado).';
+                }
+                showNotification(msg, 'error');
             }
         });
 
